@@ -103,6 +103,13 @@ Uses: No registers altered by the function
         BNE _print_loop
 
     MOV r0, #NEW_LINE
+
+    _print_busy_wait2: // Wait for space in the write FIFO
+        LDR r4, [r2, #UART_CONTROL_REG_OFFSET] // Read WSPACE for available space
+        LDR r3, =0xFFFF0000 // Mask for WSPACE control bits
+        ANDS r4, r4, r3
+        BEQ _print_busy_wait2 // Wait if no space in the write FIFO
+
     STR r0, [r2]   // print newline
     POP {r0-r5, pc}
 	
