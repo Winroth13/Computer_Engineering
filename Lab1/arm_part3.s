@@ -118,7 +118,7 @@ Returns:
   r0 - fractoral of number
 -------------------------------------------------------
 */
-    PUSH    {r1, lr}
+    PUSH {r1, lr}
     CMP r0, #1
     BEQ _fract_done
     MOV r1, r0
@@ -127,7 +127,7 @@ Returns:
     MUL r0, r0, r1
 
     _fract_done:
-        POP     {r1, pc}
+        POP {r1, pc}
 
 
 _start:
