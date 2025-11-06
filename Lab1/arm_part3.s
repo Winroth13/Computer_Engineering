@@ -146,13 +146,13 @@ _start:
     LDR sp, =STACK_BASE
     LDR r0, =text
     BL 	print_string
-    MOV r1, #0
+    MOV r4, #0
     _fract_loop:
-        ADD r1, r1, #1
-        MOV r0, r1
+        ADD r4, r4, #1
+        MOV r0, r4
         BL  fract_number
         BL  print_number
-        CMP r1, #10
+        CMP r4, #10
         BNE _fract_loop
 
 _end:
