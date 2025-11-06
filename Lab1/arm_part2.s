@@ -142,8 +142,7 @@ Returns:
         BEQ _find_done
         ADD r1, r1, #4
         CMP r0, r2
-        BHI _find_loop
-        MOV r0, r2
+        MOVLT r0, r2
         B   _find_loop
 
     _find_done:
