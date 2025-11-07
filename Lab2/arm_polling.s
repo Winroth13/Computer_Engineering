@@ -1,9 +1,10 @@
 // 
-.equ DISPLAYS_BASE_1, 0xff200020
-.equ UART_DATA_REGISTER_ADDRESS, 0xff201000
-.equ INCREMENT_UP_KEY, 77   // W
-.equ INCREMENT_DOWN_KEY, 74 // D
-.equ DISPLAYED_NUMBER_OFFSET_ADDRESS, 0xffffffff
+.equ STACK_BASE, 0x10000000		                  // stack beginning
+.equ DISPLAYS_BASE_1, 0xff200020                  // Addess for 7-segment-displays 1-4
+.equ UART_DATA_REGISTER_ADDRESS, 0xff201000       // Adress for UART Data Register
+.equ INCREMENT_KEY, 0x77                          // W
+.equ DECREMENT_KEY, 0x73                          // S
+.equ DISPLAYED_NUMBER_OFFSET_ADDRESS, 0xfffffff0  // The offset for the currently displayed number
 
 .data
 
@@ -28,7 +29,27 @@ display_number: // The binary for the 7-segment-display to display the numbers i
 .text
 .global _start
 
-counter_increment:
+update_display:
+/*
+-------------------------------------------------------
+Updates the displayed number
+-------------------------------------------------------
+Parameters: None
+Uses: No registers altered by the function
+-------------------------------------------------------
+*/
+    push {r4-r8, lr}
+    LDR r4, =DISPLAYS_BASE_1
+    LDR r5, =display_number
+    LDR r6, =DISPLAYED_NUMBER_OFFSET_ADDRESS
+
+    LDR r7, [r6]     // Load current displayed number offset
+    LDR r8, [r5, r7] // The binary for the new number to display
+    STR r8, [r4]     // Save new number binary to the 7-segment-display
+
+    pop {r4-r8, pc}
+
+increment_display:
 /*
 -------------------------------------------------------
 Increments the displayed number
@@ -38,38 +59,45 @@ Parameters:
 Uses: No registers altered by the function
 -------------------------------------------------------
 */
-    PUSH {r0, r4-r8, lr}
-    LDR r4, =DISPLAYS_BASE_1
-    LDR r5, =display_number
-    LDR r6, =DISPLAYED_NUMBER_OFFSET_ADDRESS
-    LDR r7, [r6]     // Load current displayed number offset
+    PUSH {r0, r4-r6, lr}
+    LDR r4, =DISPLAYED_NUMBER_OFFSET_ADDRESS
+    LDR r5, [r4]     // Load current displayed number offset
 
-    MUL r0, r0, #4   // Convert increment into offset
-    ADD r7, r7, r0   // New offset
-    // MOV r7, r7 % 16  // Clamp offset to the range of possible numbers
-    STR r7, [r6]     // Save new offset to memory
+    MOV r6, #4       // How much to offset per increment
+    MUL r0, r0, r6   // Convert increment into offset
+    ADD r5, r5, r0   // New offset
 
-    MOV r8, [r5, r7] // The binary for the new number to display
-    STR r4, [r8]     // Save new number binary to the 7-segment-display
+    STR r5, [r4]     // Save new offset to memory
 
-    POP {r0, r4-r8, pc}
+    BL update_display
+
+    POP {r0, r4-r6, pc}
 
 _start:
-    LDR r4, =UART_DATA_REGISTER_ADDRESS
-    LDR r5, =DISPLAYS_BASE_1
-    LDR r6, =display_number
-    MOV r7, #0
+    LDR sp, =STACK_BASE
+    LDR r5, =UART_DATA_REGISTER_ADDRESS
+    LDR r6, =INCREMENT_KEY
+    LDR r7, =DECREMENT_KEY
+    LDR r8, =DISPLAYED_NUMBER_OFFSET_ADDRESS
+    MOV r9, #0
+    STR r9, [r8] // Reset displayed number offset
+    
+    BL update_display
 
     _loop:
-        // UART read
-        LDR r8, [r4]                 // Read the data register
-        ANDS r9, r8, #0x8000         // Check if data is valid, bit 15
+        // Read UART
+        LDR r10, [r5]                // Read the data register
+        ANDS r11, r10, #0x8000       // Check if data is valid, bit 15
         BEQ _loop                    // If not valid, loop
-        AND r8, r8, #0x00ff          // Mask the read data bits 0-7
+        AND r10, r10, #0x00ff        // Mask the read data bits 0-7
         
-        ADD r7, r7, #4
-        LDR r10, [r6, r7]
-        STR r10, [r5]
+        // Increment display
+        CMP r10, r6                  // Incremnet-key was pressed
+        MOVEQ r0, #1                 // Increment by one
+        BLEQ increment_display
+        CMP r10, r7                  // Decrement-key was pressed
+        MOVEQ r0, #0xffffffff        // Decrement by one
+        BLEQ increment_display
         B _loop
 
 _halt:
