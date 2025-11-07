@@ -1,4 +1,4 @@
-// 
+// Constants
 .equ STACK_BASE, 0x10000000		                  // stack beginning
 .equ DISPLAYS_BASE_1, 0xff200020                  // Addess for 7-segment-displays 1-4
 .equ UART_DATA_REGISTER_ADDRESS, 0xff201000       // Adress for UART Data Register
@@ -65,6 +65,11 @@ Uses: No registers altered by the function
 
     MOV r6, #4       // How much to offset per increment
     MUL r0, r0, r6   // Convert increment into offset
+
+    /* _underflow_loop:
+        CMP r5, r0   // */
+        
+
     ADD r5, r5, r0   // New offset
 
     STR r5, [r4]     // Save new offset to memory
@@ -75,27 +80,27 @@ Uses: No registers altered by the function
 
 _start:
     LDR sp, =STACK_BASE
-    LDR r5, =UART_DATA_REGISTER_ADDRESS
-    LDR r6, =INCREMENT_KEY
-    LDR r7, =DECREMENT_KEY
-    LDR r8, =DISPLAYED_NUMBER_OFFSET_ADDRESS
-    MOV r9, #0
-    STR r9, [r8] // Reset displayed number offset
+    LDR r4, =UART_DATA_REGISTER_ADDRESS
+    LDR r5, =INCREMENT_KEY
+    LDR r6, =DECREMENT_KEY
+    LDR r7, =DISPLAYED_NUMBER_OFFSET_ADDRESS
+    MOV r8, #0
+    STR r8, [r7] // Reset displayed number offset
     
     BL update_display
 
     _loop:
         // Read UART
-        LDR r10, [r5]                // Read the data register
-        ANDS r11, r10, #0x8000       // Check if data is valid, bit 15
+        LDR r9, [r4]                // Read the data register
+        ANDS r10, r9, #0x8000       // Check if data is valid, bit 15
         BEQ _loop                    // If not valid, loop
-        AND r10, r10, #0x00ff        // Mask the read data bits 0-7
+        AND r9, r9, #0x00ff        // Mask the read data bits 0-7
         
         // Increment display
-        CMP r10, r6                  // Incremnet-key was pressed
+        CMP r9, r5                  // Incremnet-key was pressed
         MOVEQ r0, #1                 // Increment by one
         BLEQ increment_display
-        CMP r10, r7                  // Decrement-key was pressed
+        CMP r9, r6                  // Decrement-key was pressed
         MOVEQ r0, #0xffffffff        // Decrement by one
         BLEQ increment_display
         B _loop
