@@ -1,5 +1,3 @@
-
-
 // Symbolic constants
 .equ LEDS_BASE, 0xff200000
 .equ SWITCHES_BASE, 0xff200040
