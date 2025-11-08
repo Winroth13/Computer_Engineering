@@ -9,7 +9,7 @@
 
 .data
 
-display_number: // The binary for the 7-segment-display to display the numbers in order
+display_binary: // The binary for the 7-segment-display to display the numbers in order
 	.word 0b00111111 // 0
 	.word 0b00000110 // 1
     .word 0b01011011 // 2
@@ -41,7 +41,7 @@ Uses: No registers altered by the function
 */
     push {r4-r9, lr}
     LDR r4, =DISPLAYS_BASE_1
-    LDR r5, =display_number
+    LDR r5, =display_binary
     LDR r6, =DISPLAYED_NUMBER
 
     LDR r7, [r6]        // Load current displayed number
