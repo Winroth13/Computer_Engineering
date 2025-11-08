@@ -4,7 +4,7 @@
 .equ UART_DATA_REGISTER, 0xff201000         // Adress for UART Data Register
 .equ INCREMENT_KEY, 0x77                    // W
 .equ DECREMENT_KEY, 0x73                    // S
-.equ DISPLAYED_NUMBER, 0xfffffff0           // The offset for the currently displayed number
+.equ DISPLAYED_NUMBER, 0xfffffff0           // The currently displayed number
 .equ NUMBER_BASE, 16                        // The number base to use for the display
 
 .data
