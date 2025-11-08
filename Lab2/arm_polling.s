@@ -67,7 +67,7 @@ Uses: No registers altered by the function
     LDR r5, [r4]                // Load current displayed number offset
     LDR r6, =NUMBER_BASE
 
-    ADD r5, r5, r0              // New offset
+    ADD r5, r5, r0              // New number to display
 
     _underflow_loop:
         CMP r5, #0              // If lower than 0
@@ -75,11 +75,11 @@ Uses: No registers altered by the function
         BLT _underflow_loop     // Until within number base
     
     _overflow_loop:
-        CMP r5, r6              // If higher than number base
+        CMP r5, r6              // If higher than highest allowed number
         SUBGE r5, r6            // Decrease by number base
         BGE _overflow_loop      // Until within number base
 
-    STR r5, [r4]                // Save new offset to memory
+    STR r5, [r4]                // Save new number to memory
 
     BL update_display
 
