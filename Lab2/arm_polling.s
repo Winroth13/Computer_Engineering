@@ -1,5 +1,5 @@
 // Constants
-.equ STACK_BASE, 0x10000000		            // stack beginning
+.equ STACK_BASE, 0x10000000		            // Stack beginning
 .equ DISPLAYS_BASE_1, 0xff200020            // Addess for 7-segment-displays 1-4
 .equ UART_DATA_REGISTER, 0xff201000         // Adress for UART Data Register
 .equ INCREMENT_KEY, 0x77                    // W
