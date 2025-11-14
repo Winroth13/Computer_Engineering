@@ -4,10 +4,11 @@
 .equ UART_DATA_REGISTER, 0xff201000         // Adress for UART Data Register
 .equ INCREMENT_KEY, 0x77                    // W
 .equ DECREMENT_KEY, 0x73                    // S
-.equ DISPLAYED_NUMBER, 0xfffffff0           // The currently displayed number
 .equ NUMBER_BASE, 16                        // The number base to use for the display
 
 .data
+
+displayed_number: .word 0   // The currently displayed number
 
 display_binary: // The binary for the 7-segment-display to display the numbers in order
 	.word 0b00111111 // 0
@@ -42,7 +43,7 @@ Uses: No registers altered by the function
     push {r4-r9, lr}
     LDR r4, =DISPLAYS_BASE_1
     LDR r5, =display_binary
-    LDR r6, =DISPLAYED_NUMBER
+    LDR r6, =displayed_number
 
     LDR r7, [r6]        // Load current displayed number
     MOV r8, #4          // Offset between numbers
@@ -63,7 +64,7 @@ Uses: No registers altered by the function
 -------------------------------------------------------
 */
     PUSH {r0, r4-r7, lr}
-    LDR r4, =DISPLAYED_NUMBER
+    LDR r4, =displayed_number
     LDR r5, [r4]                // Load current displayed number offset
     LDR r6, =NUMBER_BASE
 
@@ -90,7 +91,7 @@ _start:
     LDR r4, =UART_DATA_REGISTER
     LDR r5, =INCREMENT_KEY
     LDR r6, =DECREMENT_KEY
-    LDR r7, =DISPLAYED_NUMBER
+    LDR r7, =displayed_number
     MOV r8, #0
     STR r8, [r7]        // Reset displayed number
     
