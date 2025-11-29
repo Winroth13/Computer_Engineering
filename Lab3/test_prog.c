@@ -13,17 +13,20 @@ int main(){
     long long temp;
     unsigned int pos, count;
 
+    //putChar('E');
+    //outImage();
+
     // Lägger inledande text i utmatningsbuffer, 
     // samt skickar innehåll från utmatningsbuffer till terminal.
     // Hämtar sedan text från terminalinmatning.
-    putText(headMsg);   
-    outImage();         
-    inImage();      
+    putText(headMsg);
+    outImage();
+    //inImage();
 
     // Loop som hämtar 5 tal från inmatningsbuffert, 
     // samt placerar uträkning med dessa tal att presentera i utmatningsbufferten.
     // Talen summeras också i variabeln sum.
-    for (count=5; count>0; count-- ){
+    /* for (count=5; count>0; count-- ){
         temp = getInt();
         if (temp < 0){
             pos = getOutPos();
@@ -36,28 +39,28 @@ int main(){
     }
     pos = getOutPos();
     pos--;
-    setOutPos(pos);
+    setOutPos(pos); */
 
     // Lägger till summan i uträkningen i utbufferten,
     // och skriver uträkningen till terminalskärmen.
-    putChar('=');
+    /* putChar('=');
     putInt(sum);
-    outImage();
+    outImage(); */
 
     // Försöker läsa ytterligare 12 tecken från inbufferten,
     // och lägger de lästa tecknen i utbufferten.
     // Lägger även till ett nyradstecken och talet 125 i utbufferten,
     // och skriver sedan ut alltihopa i terminalen.
-    getText(buf, 12); 
+    /* getText(buf, 12); 
     putText(buf);
 //    putChar('\n');
     putInt(125);    
-    outImage(); 
+    outImage();  */
 
     // Lägger till sist avslutningstext i utmatningsbufferten,
     // och visar texten i terminalen.
-    putText(endMsg); 
-    outImage();  
+    /* putText(endMsg); 
+    outImage();   */
 
     return 0;
 }
