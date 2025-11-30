@@ -13,9 +13,6 @@ int main(){
     long long temp;
     unsigned int pos, count;
 
-    //putChar('E');
-    //outImage();
-
     // Lägger inledande text i utmatningsbuffer, 
     // samt skickar innehåll från utmatningsbuffer till terminal.
     // Hämtar sedan text från terminalinmatning.
