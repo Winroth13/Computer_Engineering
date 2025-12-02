@@ -65,7 +65,7 @@ getInt:
     _getIntCheckBlanc:
         # Check if blanc
         cmpb $' ', %r14b
-        jne _getIntCheckPlus
+        jne _getIntCheckMinus
 
         # Increment inBuff index
         incl inBufPos
@@ -77,23 +77,32 @@ getInt:
         # Recheck blanc
         jmp _getIntCheckBlanc
 
-    _getIntCheckPlus:
-        # Check if plus sign
-        cmpb $'+', %r14b
-        jne _getIntCheckMinus
-
-        # Increment index
-        incl inBufPos
-        jmp _getIntLoop
-
     _getIntCheckMinus:
         # Check if minus sign
         cmpb $'-', %r14b
-        jne _getIntLoop
+        jne _getIntCheckPlus
 
         # Increment index
         incl inBufPos
         movq $1, %r10
+        
+        jmp _getIntCheckNumber
+
+    _getIntCheckPlus:
+        # Check if plus sign
+        cmpb $'+', %r14b
+        jne _getIntCheckNumber
+
+        # Increment index
+        incl inBufPos
+    
+    _getIntCheckNumber:
+        # Check if Newline, meaning no number
+        cmpb $0x0a, %r14b
+        jne _getIntLoop
+
+        # Fetch inBuffer again
+        jmp _getIntCheckBuf
 
     _getIntLoop:
         # Get next char
